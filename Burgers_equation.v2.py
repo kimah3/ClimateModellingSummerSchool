@@ -55,7 +55,7 @@ def main():
     plt.xlabel('x')
     plt.axhline(0,linestyle=':',color='black')
     plt.show()
-    plot_convection(u,x,nt,'test')
+#    plot_convection(u,x,nt,'test')
 
 main()
 
