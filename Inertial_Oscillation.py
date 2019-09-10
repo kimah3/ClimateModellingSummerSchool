@@ -5,7 +5,7 @@ def main():
     # Set up parameters
     f  = 1e-4
     nt = 12
-    dt = 5000
+    dt = 10000
 
     # Initial Conditions
     x0 =  0.
