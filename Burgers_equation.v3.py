@@ -1,7 +1,6 @@
 import matplotlib
 import numpy as np              #External library for numerical calculations
 import matplotlib .pyplot as plt#plotting library
-import matplotlib .animation as animation#plotting library
 
 #Function defining the initial and analytic solution
 def initialBell(x):
@@ -10,11 +9,11 @@ def initialBell(x):
 def main():
     #Burger's equation in CTCS
     # Setup parameters
-    nt   = 1220
+    nt   = 100
     nt50 = 1
     nx   = 150
-    dt   = 1./100
-    dx   = 10.
+    dt   = 1./nt
+    dx   = 10./nx
 
     # Initial data structure
     u  = np.zeros((nx+1, nt+1))#CTCS
@@ -34,20 +33,21 @@ def main():
 
     # Loop over all time-steps
     for n in range(1,nt):
-        u[1:nx,  n+1] = u[1:nx,  n-1] - u[1:nx,  n]*(u[2:nx+1,  n] - u[:nx-1,  n])*dt/dx
-        uff[:nx, n+1] = uff[:nx, n  ] - uff[:nx, n]*(uff[1:nx+1,n] - uff[:nx,  n])*dt/dx
-        ufb[1:nx,n+1] = ufb[1:nx,n  ] - ufb[1:nx,n]*(ufb[1:nx,  n] - ufb[:nx-1,n])*dt/dx
+        for j in range(1,nx):
+            u[j,  n+1] = u[j,  n-1] - u[j,  n] * ( u[j+1,  n] - u[j-1,  n])*dt/dx
+            uff[j,n+1] = uff[j,n  ] - uff[j,n] * ( uff[j+1,n] - uff[j,  n])*dt/dx
+            ufb[j,n+1] = ufb[j,n  ] - ufb[j,n] * ( ufb[j,  n] - ufb[j-1,n])*dt/dx
 
 # Plot
-    detailed_info='nt='+str(nt)+' nx='+str(nx)+' dt/dx='+str(dt/dx)
+    detailed_info='nt='+str(nt)+' nx='+str(nx)+' courant='+str(dt/dx)
     plt.title("Burger's equation (u=initial Bell)\n "+detailed_info)
-#    plt.plot(x,u0,       'k',label='initial')
-#    plt.plot(x,u[:,nt],  'b',label='CTCS')
-#    plt.plot(x,uff[:,nt],'g',label="FTFS")
-#    plt.plot(x,ufb[:,nt],'c',label="FTBS")
-#    plt.legend(loc='upper right')
-#    plt.ylabel('u')
-#    plt.xlabel('x')
+    plt.plot(x,u0,       'k',label='initial')
+    plt.plot(x,u[:,nt],  'b',label='CTCS')
+    plt.plot(x,uff[:,nt],'g',label="FTFS")
+    plt.plot(x,ufb[:,nt],'c',label="FTBS")
+    plt.legend(loc='upper right')
+    plt.ylabel('u')
+    plt.xlabel('x')
 
 #    import matplotlib.cm as cm
 #    colour=iter(cm.rainbow(np.linspace(0,10,nt)))
@@ -60,18 +60,8 @@ def main():
 #        plt.xlabel('x')
 #        plt.axhline(0,linestyle=':',color='black')
 #        plt.show()
-    fig, ax = plt.subplots(figsize=(5,3))
-    ax.set(xlim=(0,1),ylim=(-0.2,1.2))
-    t=np.linspace(1,nt,nt+1)
-    X2,T2=np.meshgrid(x,t)
-    line = ax.plot(x,u[:,0],color='k')[0]
-    def animate(i):
-        line.set_ydata(u[:,i])
-    anim =animation.FuncAnimation( fig, animate,interval=10,frames=len(t)-1)
-    plt.draw()
-
     plt.show()
-#    plt.savefig('Burgers3.png')
+#    plt.savefig('initialBell.png')
 #    plot_convection(u,x,nt,'test')
 # hello!
 main()
